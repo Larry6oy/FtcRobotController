@@ -151,10 +151,10 @@ public class AlexBlueFarStart extends LinearOpMode {
             updateStatusDisplay();
             sleep(100);
             
-            // Step 4: Turn right 45 degrees to face the balls
-            currentStatus = "Turn Right 45°";
+            // Step 4: Turn right 35 degrees to face the balls
+            currentStatus = "Turn Right 35°";
             updateStatusDisplay();
-            turnToHeading(-45, TURN_SPEED, 3.0);
+            turnToHeading(-35, TURN_SPEED, 3.0);
             currentStatus = "Turn Complete";
             updateStatusDisplay();
             sleep(100);
@@ -162,9 +162,11 @@ public class AlexBlueFarStart extends LinearOpMode {
             // Step 5: Drive forward and intake balls
             currentStatus = "Drive Forward & Intake";
             updateStatusDisplay();
-            intakeMotor.setPower(1.0); // Start intake
-            driveDistance(66, 0, DRIVE_SPEED * 0.7, 9.0);
-            intakeMotor.setPower(0); // Stop intake
+            intakeMotor.setPower(1.0);          // Start intake
+            shootMotor.setPower(-0.3);          // Reverse shooter slowly to prevent jams
+            driveDistance(48, 0, DRIVE_SPEED * 0.7, 7.0);
+            intakeMotor.setPower(0);            // Stop intake
+            shootMotor.setPower(0);             // Stop shooter
             currentStatus = "Intake Drive Complete";
             updateStatusDisplay();
             sleep(100);
@@ -172,7 +174,7 @@ public class AlexBlueFarStart extends LinearOpMode {
             // Step 6: Drive backward to clear the area
             currentStatus = "Drive Backward";
             updateStatusDisplay();
-            driveDistance(-66, 0, DRIVE_SPEED, 7.0);
+            driveDistance(-48, 0, DRIVE_SPEED, 5.0);
             currentStatus = "Backward Drive Complete";
             updateStatusDisplay();
             sleep(100);
@@ -180,7 +182,7 @@ public class AlexBlueFarStart extends LinearOpMode {
             // Step 7: Scan for AprilTag and drive to it
             currentStatus = "Scanning for AprilTag";
             updateStatusDisplay();
-            if (scanForAprilTag(45.0, true, 10.0)) { // Scan left first
+            if (scanForAprilTag(45.0, false, 10.0)) { // Scan right first
                 currentStatus = "Tag Found - Driving";
                 updateStatusDisplay();
                 driveToAprilTag(10.0);
@@ -200,9 +202,9 @@ public class AlexBlueFarStart extends LinearOpMode {
             sleep(100);
 
             // Step 9: Strafe left to park
-            currentStatus = "Parking: Strafe Left 20\"";
+            currentStatus = "Parking: Strafe Left 40\"";
             updateStatusDisplay();
-            driveDistance(0, -20, DRIVE_SPEED, 5.0); // Strafe left
+            driveDistance(0, -40, DRIVE_SPEED, 7.0); // Strafe left
             currentStatus = "Strafe Complete";
             updateStatusDisplay();
             sleep(100);
@@ -1035,4 +1037,3 @@ public class AlexBlueFarStart extends LinearOpMode {
     }
 
 }
-

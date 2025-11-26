@@ -64,7 +64,7 @@ public class AlexBlueFarStart extends LinearOpMode {
     private int lastFL, lastFR, lastBL, lastBR;
     
     // ---- AprilTag variables ----
-    final double DESIRED_DISTANCE = 55.0;
+    final double DESIRED_DISTANCE = 65.0;
     final double SPEED_GAIN = 0.035;
     final double TURN_GAIN = 0.017;
     final double MAX_AUTO_SPEED = 0.55;
@@ -94,7 +94,7 @@ public class AlexBlueFarStart extends LinearOpMode {
         telemetry.addLine("=== RAY AUTO OP 2 ===");
         telemetry.addLine();
         telemetry.addLine("Autonomous Sequence:");
-        telemetry.addLine("  1. Drive Backward 55\"");
+        telemetry.addLine("  1. Drive Backward 75\"");
         telemetry.addLine("  2. Scan & Drive to AprilTag");
         telemetry.addLine("  3. First Shot (8 sec)");
         telemetry.addLine("  4. Turn Right 45°");
@@ -112,10 +112,10 @@ public class AlexBlueFarStart extends LinearOpMode {
         if (opModeIsActive()) {
             // ==================== AUTONOMOUS SEQUENCE ====================
             
-            // Step 1: Move backward 55 inches
-            currentStatus = "Drive Backward 55\"";
+            // Step 1: Move backward 70 inches
+            currentStatus = "Drive Backward 70\"";
             updateStatusDisplay();
-            driveDistance(-55, 0, 0.8, 5.0);
+            driveDistance(-75, 0, 0.8, 5.0);
         
             currentStatus = "Forward Complete";
             updateStatusDisplay();
@@ -164,7 +164,7 @@ public class AlexBlueFarStart extends LinearOpMode {
             updateStatusDisplay();
             intakeMotor.setPower(1.0);          // Start intake
             shootMotor.setPower(-0.3);          // Reverse shooter slowly to prevent jams
-            driveDistance(54, 0, DRIVE_SPEED * 0.7, 8.0);
+            driveDistance(60, 0, DRIVE_SPEED * 0.7, 8.0);
             intakeMotor.setPower(0);            // Stop intake
             shootMotor.setPower(0);             // Stop shooter
             currentStatus = "Intake Drive Complete";
@@ -174,7 +174,7 @@ public class AlexBlueFarStart extends LinearOpMode {
             // Step 6: Drive backward to clear the area
             currentStatus = "Drive Backward";
             updateStatusDisplay();
-            driveDistance(-54, 0, DRIVE_SPEED, 6.0);
+            driveDistance(-60, 0, DRIVE_SPEED, 6.0);
             currentStatus = "Backward Drive Complete";
             updateStatusDisplay();
             sleep(100);
@@ -182,7 +182,7 @@ public class AlexBlueFarStart extends LinearOpMode {
             // Step 7: Scan for AprilTag and drive to it
             currentStatus = "Scanning for AprilTag";
             updateStatusDisplay();
-            if (scanForAprilTag(45.0, false, 10.0)) { // Scan right first
+            if (scanForAprilTag(45.0, true, 10.0)) { // Scan left first
                 currentStatus = "Tag Found - Driving";
                 updateStatusDisplay();
                 driveToAprilTag(10.0);
@@ -202,9 +202,9 @@ public class AlexBlueFarStart extends LinearOpMode {
             sleep(100);
 
             // Step 9: Strafe left to park
-            currentStatus = "Parking: Strafe Left 40\"";
+            currentStatus = "Parking: Strafe Left 20\"";
             updateStatusDisplay();
-            driveDistance(0, -40, DRIVE_SPEED, 7.0); // Strafe left
+            driveDistance(0, -20, DRIVE_SPEED, 5.0); // Strafe left
             currentStatus = "Strafe Complete";
             updateStatusDisplay();
             sleep(100);
@@ -293,44 +293,6 @@ public class AlexBlueFarStart extends LinearOpMode {
     
     // ==================== Autonomous Movement Functions ====================
     
-    private void driveToPosition(double targetY, double targetX, double speed, double timeoutSeconds) {
-        ElapsedTime timer = new ElapsedTime();
-
-        timer.reset();
-        while (opModeIsActive() && timer.seconds() < timeoutSeconds) {
-            updatePose();
-
-            double errorX = targetX - x;
-            double errorY = targetY - y;
-            double distanceError = Math.sqrt(errorX * errorX + errorY * errorY);
-
-            if (distanceError < DISTANCE_THRESHOLD) {
-                break;
-            }
-
-            double c = Math.cos(heading), s = Math.sin(heading);
-            double errorForward = errorX * c + errorY * s;
-            double errorStrafe = -errorX * s + errorY * c;
-
-            double fwd = Math.max(-speed, Math.min(speed, errorForward * 0.1));
-            double str = Math.max(-speed, Math.min(speed, errorStrafe * 0.1));
-
-            // Add minimum power threshold to prevent oscillation
-            if (Math.abs(fwd) < 0.08 && Math.abs(str) < 0.08) {
-                break;
-            }
-
-            setDrivePower(fwd, str, 0);
-
-            telemetry.addData("Status", currentStatus);
-            telemetry.addData("🎯 Target", "x=%.1f, y=%.1f", targetX, targetY);
-            telemetry.addData("📍 Current", "x=%.1f, y=%.1f", x, y);
-            telemetry.addData("📏 Error", "%.1f inches", distanceError);
-            telemetry.update();
-        }
-        stopDrive();
-    }
-
     private void driveDistance(double forwardInches, double strafeInches, double speed, double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
         
